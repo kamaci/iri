@@ -388,18 +388,10 @@ public class RocksDBPersistenceProvider implements PersistenceProvider {
     }
 
     public void createBackup(String path) throws RocksDBException {
-        Env env;
-        BackupableDBOptions backupableDBOptions;
-        BackupEngine backupEngine;
-        env = Env.getDefault();
-        backupableDBOptions = new BackupableDBOptions(path);
-        try {
-            backupEngine = BackupEngine.open(env, backupableDBOptions);
+        try(Env env = Env.getDefault();
+            BackupableDBOptions backupableDBOptions = new BackupableDBOptions(path);
+            BackupEngine backupEngine = BackupEngine.open(env, backupableDBOptions)) {
             backupEngine.createNewBackup(db, true);
-            backupEngine.close();
-        } finally {
-            env.close();
-            backupableDBOptions.close();
         }
     }
 
